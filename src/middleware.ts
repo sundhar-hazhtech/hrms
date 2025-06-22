@@ -1,12 +1,11 @@
-
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const jwtkey ="e7QTfpRylS3XERRdFRnZ7s0zrO79GDsfm4BHkL/Vv1o=";
+const jwtkey = "e7QTfpRylS3XERRdFRnZ7s0zrO79GDsfm4BHkL/Vv1o=";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || jwtkey);
 
-export async function middleware(req) {
+export async function middleware(req: NextRequest): Promise<NextResponse> {
     const token = req.cookies.get('token')?.value;
     if (!token) return NextResponse.redirect(new URL('/login', req.url));
 

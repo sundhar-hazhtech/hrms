@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 
 const MONGODB_URI = "mongodb+srv://vgssanjay:sanjay%4096@cluster0.yqmgw.mongodb.net/hrms";
 
@@ -6,9 +6,19 @@ if (!MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI');
 }
 
-let cached = global.mongoose || { conn: null, promise: null };
+interface Cached {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+}
 
-export async function connectDB() {
+declare global {
+    // eslint-disable-next-line no-var
+    var mongoose: Cached | undefined;
+}
+
+let cached: Cached = global.mongoose || { conn: null, promise: null };
+
+export async function connectDB(): Promise<Mongoose> {
     if (cached.conn) return cached.conn;
 
     if (!cached.promise) {

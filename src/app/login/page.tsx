@@ -1,15 +1,14 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
 export default function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const router = useRouter();
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!email || !password) return alert('Please enter credentials');
 
@@ -68,7 +67,7 @@ export default function Login() {
                         </div>
                      <div className="text-center text-sm text-gray-500">
                         Don’t have an account ? {''}                       
-                        <Link href="\signup" className="text-[#34b6b8] font-medium hover:underline">
+                        <Link href="/signup" className="text-[#34b6b8] font-medium hover:underline">
                             Create New
                         </Link>
                      </div>

@@ -1,12 +1,17 @@
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
+import React, { ReactNode } from 'react';
 
 export const metadata = {
   title: 'Login Demo',
   description: 'Login Signup Flow',
 };
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>

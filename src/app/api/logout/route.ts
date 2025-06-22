@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(): Promise<Response> {
     const response = NextResponse.json({ message: 'Logged out successfully' });
 
-   
     response.cookies.set('token', '', {
         httpOnly: true,
         path: '/',
