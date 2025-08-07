@@ -1,10 +1,11 @@
 'use client';
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import Sidebar from '@/app/profile/components/Sidebar';
-import Header from '@/components/layout/Header';
-import ProfileHeader from '@/components/profile/ProfileHeader';
-import EducationSection from '@/components/profile/EducationSection';
-import SkillsSection from '@/components/profile/SkillsSection';
+import ProfileHeader from '@/app/profile/components/ProfileHeader';
+import EducationSection from '@/app/profile/components/EducationSection';
+import SkillsSection from '@/app/profile/components/SkillsSection';
+import ProfileDetails from '@/app/profile/components/ProfileDetails';
+import LoadingOverlay from '@/app/components/LoadingOverlay';
 
 interface Education {
   course: string;
@@ -24,7 +25,7 @@ export default function MyProfilePage() {
     phone: '',
     skills: [] as string[],
     education: [] as Education[],
-    progress: 0,
+    progress: 0, 
     photoUrl: '',
   });
   const [loading, setLoading] = useState(true);
@@ -83,7 +84,7 @@ export default function MyProfilePage() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProfile((prev: Record<string, any>) => ({ ...prev, [name]: value }));
+    setProfile((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const handleAddSkill = () => {
@@ -141,20 +142,40 @@ export default function MyProfilePage() {
     setProfile(updated);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingOverlay loading={loading} message="Loading profile..." />;
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <Header />
-      <main className="flex-1 p-6 sm:p-10 transition-all duration-300">
+  
+      <main className="flex-1 p-6 sm:p-10 md:ml-64 transition-all duration-300">
+         <img src="/assets/Hashtag-Logo.png" alt="Logo" className="mb-2 w-65 h-12" />
         <ProfileHeader
           profile={profile}
           editingName={editingName}
           setEditingName={setEditingName}
           handleChange={handleChange}
           handleNameSave={handleNameSave}
+          setProfile={setProfile}
+          saveProfile={saveProfile}
         />
+        <div className="my-6">
+          <ProfileDetails
+            location={profile.location}
+            dob={profile.dob}
+            phone={profile.phone}
+            email={profile.email}
+            gender={profile.gender}
+            onSave={(updatedProfile) => {
+              setProfile((prev: any) => ({ ...prev, ...updatedProfile }));
+              saveProfile();
+            }}
+            onChange={(field, value) => {
+              setProfile((prev: any) => ({ ...prev, [field]: value }));
+              saveProfile();
+            }}
+          />
+        </div>
         <EducationSection
           education={profile.education}
           showEditEducation={showEditEducation}

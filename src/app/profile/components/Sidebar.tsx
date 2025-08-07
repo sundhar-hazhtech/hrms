@@ -1,5 +1,8 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -7,49 +10,96 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    return pathname === path;
+  };
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <>
-      <div className="md:hidden purple-600 text-white flex justify-between items-center p-4">
-        <img src="/assets/Hashtag-Logo.png" alt="Logo" className="mb-2 w-65 h-12" />
+      <div className="md:hidden purple-600 text-white flex justify-end items-center p-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Toggle sidebar"
           className="p-2 rounded bg-purple-700 z-50"
         >
           {sidebarOpen ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white " fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <CloseOutlined className="text-white text-lg" />
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <MenuOutlined className="text-white text-lg" />
           )}
         </button>
       </div>
 
       <aside
-        className={`fixed md:relative top-0 left-0 w-64 h-screen bg-purple-700 text-white flex flex-col p-6 space-y-6 md:flex transition-transform transform z-50 ${
+        className={`fixed md:fixed top-0 left-0 w-64 h-screen bg-purple-700 text-white flex flex-col p-6 space-y-6 md:flex transition-transform transform z-50 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <h2 className="text-2xl font-bold hidden md:block">HRMS</h2>
-        <nav className="flex flex-col space-y-4 overflow-y-auto">
-          <a href="/profile/dashboard" className="hover:bg-white hover:text-purple-600 p-2 rounded transition">
+        <nav className="flex flex-col space-y-4 pb-6">
+          <Link 
+            href="/profile/dashboard" 
+            onClick={handleLinkClick}
+            className={`p-2 rounded transition ${
+              isActive('/profile/dashboard') 
+                ? 'bg-white text-purple-600 font-semibold' 
+                : 'hover:bg-white hover:text-purple-600'
+            }`}
+          >
             Dashboard
-          </a>
-          <a href="#Projects" className="hover:bg-white hover:text-purple-600 p-2 rounded transition">
+          </Link>
+          <Link 
+            href="#Projects" 
+            onClick={handleLinkClick}
+            className={`p-2 rounded transition ${
+              isActive('#Projects') 
+                ? 'bg-white text-purple-600 font-semibold' 
+                : 'hover:bg-white hover:text-purple-600'
+            }`}
+          >
             Projects
-          </a>
-          <a href="#PayRoll" className="hover:bg-white hover:text-purple-600 p-2 rounded transition">
+          </Link>
+          <Link 
+            href="#PayRoll" 
+            onClick={handleLinkClick}
+            className={`p-2 rounded transition ${
+              isActive('#PayRoll') 
+                ? 'bg-white text-purple-600 font-semibold' 
+                : 'hover:bg-white hover:text-purple-600'
+            }`}
+          >
             PayRoll
-          </a>
-          <a href="#Attendance" className="hover:bg-white hover:text-purple-600 p-2 rounded transition">
+          </Link>
+          <Link 
+            href="#Attendance" 
+            onClick={handleLinkClick}
+            className={`p-2 rounded transition ${
+              isActive('#Attendance') 
+                ? 'bg-white text-purple-600 font-semibold' 
+                : 'hover:bg-white hover:text-purple-600'
+            }`}
+          >
             Attendance
-          </a>
-          <a href="/profile/my-profile" className="hover:bg-white hover:text-purple-600 p-2 rounded transition">
+          </Link>
+          <Link 
+            href="/profile/my-profile" 
+            onClick={handleLinkClick}
+            className={`p-2 rounded transition ${
+              isActive('/profile/my-profile') 
+                ? 'bg-white text-purple-600 font-semibold' 
+                : 'hover:bg-white hover:text-purple-600'
+            }`}
+          >
             My Profile
-          </a>
+          </Link>
         </nav>
         <button
           onClick={async () => {

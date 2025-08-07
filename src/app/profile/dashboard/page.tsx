@@ -1,29 +1,24 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from '@/app/profile/components/Sidebar';
 import UserInfoCard from '../components/UserInfoCard';
-
-import ProfileDetails from '@/components/profile/ProfileDetails';
-import DashboardStats from '@/components/profile/DashboardStats';
+import ProfileDetails from '@/app/profile/components/ProfileDetails';
+import DashboardStats from '@/app/profile/components/DashboardStats';
+import LoadingOverlay from '@/app/components/LoadingOverlay';
 
 
 
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [stats, setStats] = useState({
     employees: 0,
     leaveRequests: 0,
     notifications: 0,
   });
-
-  // Profile details state
-  const [education10th, setEducation10th] = useState('');
-  const [education12th, setEducation12th] = useState('');
-  const [college, setCollege] = useState('');
-  const [skills, setSkills] = useState<string[]>([]);
-  const [location, setLocation] = useState('');
-  const [isProfileEditing, setIsProfileEditing] = useState(false);
 
   // User info for UserInfoCard
   const [name, setName] = useState('');
@@ -34,7 +29,7 @@ export default function DashboardPage() {
     // For now, use placeholder data
     setStats({
       employees: 256,
-      leaveRequests: 5,
+      leaveRequests: 15,
       notifications: 10,
     });
   }, []);
@@ -42,39 +37,19 @@ export default function DashboardPage() {
   useEffect(() => {
     async function fetchUserProfile() {
       try {
-        const res = await fetch('/api/user');
+        const res = await fetch('/api/user/profile');
         if (!res.ok) {
           console.error('Failed to fetch user profile');
           return;
         }
-        const users = await res.json();
-        // Assuming current user is identified by email from AuthContext or similar
-        // For now, pick the first user as placeholder
-        const currentUser = users[0];
+        const data = await res.json();
+        const currentUser = data.user;
 
         if (currentUser) {
-          // Extract education entries
-          const education = currentUser.education || [];
-          // Find 10th, 12th, college by course or organization name heuristics
-          const edu10th = education.find((e: any) =>
-            e.course?.toLowerCase().includes('10th') || e.organization?.toLowerCase().includes('10th')
-          );
-          const edu12th = education.find((e: any) =>
-            e.course?.toLowerCase().includes('12th') || e.organization?.toLowerCase().includes('12th')
-          );
-          const collegeEdu = education.find((e: any) =>
-            !e.course?.toLowerCase().includes('10th') && !e.course?.toLowerCase().includes('12th')
-          );
-
-          setEducation10th(edu10th ? edu10th.course || edu10th.organization || '' : '');
-          setEducation12th(edu12th ? edu12th.course || edu12th.organization || '' : '');
-          setCollege(collegeEdu ? collegeEdu.course || collegeEdu.organization || '' : '');
-
-          setSkills(currentUser.skills || []);
-          setLocation(currentUser.location || '');
-
+          // Since this endpoint returns only name and email, education, skills, location are not available here
           setName(currentUser.name || '');
           setEmail(currentUser.email || '');
+          // You may want to fetch additional profile details from another endpoint if needed
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -84,14 +59,15 @@ export default function DashboardPage() {
     fetchUserProfile();
   }, []);
 
+   if (loading) return <LoadingOverlay loading={loading} message="Loading profile..." />
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <main
-        className={`flex-1 p-6 sm:p-10 transition-all duration-300 ${
-          sidebarOpen ? 'blur-sm pointer-events-none select-none' : ''
-        }`}
+        className={`flex-1 p-6 sm:p-10 md:ml-64 transition-all duration-300`}
       >
+         <img src="/assets/Hashtag-Logo.png" alt="Logo" className="mb-2 w-65 h-12" />
         <UserInfoCard name={name} email={email} />
         <h1 className="text-3xl font-bold mb-6 text-purple-700">Dashboard</h1>
 
@@ -102,13 +78,13 @@ export default function DashboardPage() {
         />
 
         <ProfileDetails
-          education10th={education10th}
-          education12th={education12th}
-          college={college}
-          skills={skills}
-          location={location}
-          isProfileEditing={isProfileEditing}
-          setIsProfileEditing={setIsProfileEditing}
+          location=""
+          dob=""
+          phone=""
+          email=""
+          gender=""
+          onSave={() => {}}
+          onChange={() => {}}
         />
       </main>
     </div>
